@@ -1,6 +1,8 @@
 package com.example.remoteapi;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -13,21 +15,32 @@ public class StudentController {
     StudentService studentService;
 
     @PostMapping("/add")
-    public String addStudent(@RequestBody Student student)
+    public ResponseEntity addStudent(@RequestBody Student student)
     {
-        return studentService.addStudent(student);
+          String  s = studentService.addStudent(student);
+        return new ResponseEntity(s, HttpStatus.CREATED);
     }
 
     @GetMapping("/get")
-    public Student get( @RequestParam("id") int admnNo)
+    public ResponseEntity get( @RequestParam("id") int admnNo)
     {
-        return studentService.get(admnNo);
+        Student s = studentService.get(admnNo);
+
+        if(s==null)
+        {
+            return new ResponseEntity<>("Student not found",HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(s,HttpStatus.FOUND);
+
     }
 
     @DeleteMapping("/delete")
-    public String delete(@RequestParam("id") int admnNo)
+    public ResponseEntity delete(@RequestParam("id") int admnNo)
     {
-        return studentService.delete(admnNo);
+        String s = studentService.delete(admnNo);
+
+        return new ResponseEntity<>(s,HttpStatus.OK);
 
     }
 
@@ -40,9 +53,11 @@ public class StudentController {
     }
     // return the total number of student whose age greater than 15
     @GetMapping("/gettotalstudent")
-    public int gettotalstudent()
+    public ResponseEntity gettotalstudent()
     {
-        return studentService.gettotalstudent();
+        int totalstudent = studentService.gettotalstudent();
+
+        return new ResponseEntity(totalstudent,HttpStatus.OK);
 
     }
 }
